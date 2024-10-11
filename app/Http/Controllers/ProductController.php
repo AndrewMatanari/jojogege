@@ -35,9 +35,7 @@ class ProductController extends Controller
         $product = Product::create($validated);
 
         if ($request->hasFile('photo')) {
-            $file = $request->file('photo');
-            $filePath = $file->store('public/products'); // Save in a 'products' folder
-            $product->update(['photo' => $filePath]);
+            $this->storeImage($product, $request->file('photo'));
         }
 
         return redirect()->route('products.index')->with('success', 'Product added successfully');
@@ -55,27 +53,24 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
-            $validated = $request->validate([
-                'id' => 'required|string|max:12|unique:products,id',
-                'product_name' => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'retail_price' => 'required|numeric|min:0',
-                'wholesale_price' => 'required|numeric|min:0',
-                'origin' => 'required|string|size:2',
-                'quantity' => 'required|integer|min:0',
-                'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-
+        $validated = $request->validate([
+            'id' => "required|string|max:12|unique:products,id,{$product->id}",
+            'product_name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'retail_price' => 'required|numeric|min:0',
+            'wholesale_price' => 'required|numeric|min:0',
+            'origin' => 'required|string|size:2',
+            'quantity' => 'required|integer|min:0',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $product->update($validated);
 
         if ($request->hasFile('photo')) {
             if ($product->photo) {
-                Storage::delete($product->photo); // Delete the old photo if it exists
+                Storage::delete($product->photo);
             }
-            $file = $request->file('photo');
-            $filePath = $file->store('public/products'); // Save in a 'products' folder
-            $product->update(['photo' => $filePath]);
+            $this->storeImage($product, $request->file('photo'));
         }
 
         return redirect()->route('products.index')->with('success', 'Product updated successfully');
@@ -84,10 +79,16 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         if ($product->photo) {
-            Storage::delete('public/' . $product->photo);
+            Storage::delete($product->photo);
         }
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Product deleted successfully');
+    }
+
+    private function storeImage(Product $product, $file)
+    {
+        $filePath = $file->store('public/products');
+        $product->update(['photo' => $filePath]);
     }
 }
 

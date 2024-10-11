@@ -50,7 +50,8 @@
                 <td>{{ $product->origin }}</td>
                 <td>{{ $product->quantity }}</td>
                 <td class="text-center">
-                    <img src="{{ $product->photo ? Storage::url($product->photo) : asset('img/no-image.jpg') }}" class="img-thumbnail w-25" alt="Product Image">
+                    <img src="{{ $product->photo ? Storage::url($product->photo) : asset('img/no-image.jpg') }}" class="img-thumbnail w-25"
+                    alt="Product Image">
                 </td>
                 <td>{{ $product->created_at->format('Y-m-d H:i') }}</td>
                 <td>{{ $product->updated_at->format('Y-m-d H:i') }}</td>
