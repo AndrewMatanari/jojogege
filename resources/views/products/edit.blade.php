@@ -16,7 +16,7 @@
                 <div class="form-group">
                     <label for="id">ID</label>
                     <input type="text" class="form-control @error('id') is-invalid @enderror" id="id"
-                    placeholder="ID" name="id" required value="{{old('id', $product->id)}}">
+                    placeholder="ID" name="id" required value="{{old('id', $product->id)}}" readonly>
                     @error('id')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
