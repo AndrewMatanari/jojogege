@@ -36,9 +36,8 @@ class ProductController extends Controller
 
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
-            $fileName = $file->hashName();
-            $filePatch = $file->storeAs('public', $fileName);
-            $product->update(['photo' => asset('storage/' . $filePatch)]);
+            $filePath = $file->store('public/products'); // Save in a 'products' folder
+            $product->update(['photo' => $filePath]);
         }
 
         return redirect()->route('products.index')->with('success', 'Product added successfully');
@@ -56,24 +55,27 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        $validated = $request->validate([
-            'id' => 'required|string|max:12|unique:products,id,' . $product->id,
-            'product_name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'retail_price' => 'required|numeric|min:0',
-            'wholesale_price' => 'required|numeric|min:0',
-            'origin' => 'required|string|size:2',
-            'quantity' => 'required|integer|min:0',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            $validated = $request->validate([
+                'id' => 'required|string|max:12|unique:products,id',
+                'product_name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'retail_price' => 'required|numeric|min:0',
+                'wholesale_price' => 'required|numeric|min:0',
+                'origin' => 'required|string|size:2',
+                'quantity' => 'required|integer|min:0',
+                'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+
         ]);
 
         $product->update($validated);
 
         if ($request->hasFile('photo')) {
+            if ($product->photo) {
+                Storage::delete($product->photo); // Delete the old photo if it exists
+            }
             $file = $request->file('photo');
-            $fileName = $file->hashName();
-            $filePatch = $file->storeAs('public', $fileName);
-            $product->update(['photo' => asset('storage/' . $filePatch)]);
+            $filePath = $file->store('public/products'); // Save in a 'products' folder
+            $product->update(['photo' => $filePath]);
         }
 
         return redirect()->route('products.index')->with('success', 'Product updated successfully');
@@ -82,7 +84,7 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         if ($product->photo) {
-            Storage::delete(str_replace(asset('storage/'), 'public/', $product->photo));
+            Storage::delete('public/' . $product->photo);
         }
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Product deleted successfully');

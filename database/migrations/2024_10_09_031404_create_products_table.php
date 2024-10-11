@@ -11,15 +11,15 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->char('id', 12)->primary();
-            $table->string('product_name', 255);
-            $table->text('description')->nullable();
-            $table->double('retail_price', 8, 2)->default(0.0);
-            $table->double('wholesale_price', 8, 2)->default(0.0);
-            $table->char('origin', 2);
-            $table->unsignedInteger('quantity')->default(0);
-            $table->text('photo')->nullable();
-            $table->timestamps(0);
+            $table->id(); // This will create an auto-incrementing ID field
+            $table->string('product_name');
+            $table->string('description')->nullable();
+            $table->decimal('retail_price', 8, 2);
+            $table->decimal('wholesale_price', 8, 2);
+            $table->string('origin', 2);
+            $table->integer('quantity');
+            $table->string('photo')->nullable();
+            $table->timestamps();
         });
     }
 
