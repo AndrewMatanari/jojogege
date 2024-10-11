@@ -26,7 +26,7 @@
 
             <div class="col-md-6">
                 <div class="form-group">
-                    <label for="product_name">Product Name</label>
+                    <label for="product_name">Product Nama</label>
                     <input type="text" class="form-control @error('product_name') is-invalid @enderror" id="product_name"
                     placeholder="Product Name" name="product_name" required value="{{old('product_name')}}">
                     @error('product_name')
